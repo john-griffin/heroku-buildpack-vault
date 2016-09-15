@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+# config
+VERSION="0.6.1"
+
+# Buildpack URL
+ARCHIVE_NAME=vault_${VERSION}_linux_amd64
+FILE_NAME=${ARCHIVE_NAME}.zip
+BUILDPACK_VAULT_PACKAGE=https://releases.hashicorp.com/vault/${VERSION}/${FILE_NAME}
+
+mkdir -p $CACHE_DIR
+if ! [ -e $CACHE_DIR/$FILE_NAME ]; then
+  echo "-----> Fetching Vault ${VERSION} binaries at ${BUILDPACK_VAULT_PACKAGE}"
+  curl $BUILDPACK_VAULT_PACKAGE -L -s -o $CACHE_DIR/$FILE_NAME
+fi
+
+echo "-----> Extracting Vault ${VERSION} binaries to ${BUILD_DIR}/vendor/vault"
+mkdir -p $CACHE_DIR/$ARCHIVE_NAME
+mkdir -p $BUILD_DIR/vendor
+unzip $CACHE_DIR/$FILE_NAME
+mv $CACHE_DIR/$ARCHIVE_NAME $BUILD_DIR/vendor/vault
+
+echo "-----> exporting PATH"
+PROFILE_PATH="$BUILD_DIR/.profile.d/vault.sh"
+mkdir -p $(dirname $PROFILE_PATH)
+echo 'export PATH="$PATH:$HOME/vendor/vault"' >> $PROFILE_PATH
