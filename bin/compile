@@ -22,8 +22,8 @@ fi
 echo "-----> Extracting Vault ${VERSION} binaries to ${BUILD_DIR}/vendor/vault"
 mkdir -p $CACHE_DIR/$ARCHIVE_NAME
 mkdir -p $BUILD_DIR/vendor
-unzip $CACHE_DIR/$FILE_NAME
-mv $CACHE_DIR/$ARCHIVE_NAME $BUILD_DIR/vendor/vault
+unzip $CACHE_DIR/$FILE_NAME -d $CACHE_DIR
+mv $CACHE_DIR/vault $BUILD_DIR/vendor/vault
 
 echo "-----> exporting PATH"
 PROFILE_PATH="$BUILD_DIR/.profile.d/vault.sh"
